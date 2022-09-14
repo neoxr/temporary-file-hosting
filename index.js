@@ -25,6 +25,7 @@ const runServer = async () => {
    }, 10_000)
    const app = express()
    app.set('view engine', 'ejs')
+      .engine('ejs', require('ejs').__express)
       .use(express.static(path.join(__dirname, 'public')))
       .use(logger('dev'))
       .use(favicon(process.cwd() + '/public/favicon.ico'))
