@@ -25,9 +25,11 @@ const runServer = async () => {
    }, 10_000)
    const app = express()
    app.set('view engine', 'ejs')
+      .set('json spaces', 2)
       .engine('ejs', require('ejs').__express)
       .use(express.static(path.join(__dirname, 'public')))
       .use(logger('dev'))
+      .use(express.json())
       .use(favicon(process.cwd() + '/public/favicon.ico'))
       .get('/', (req, res) => {
          res.render(process.cwd() + '/public/index', {
