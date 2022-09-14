@@ -1,20 +1,22 @@
 const express = require('express'),
    multer = require('multer'),
    fs = require('fs'),
+   favicon = require('serve-favicon'),
    logger = require('morgan'),
    path = require('path'),
    db = require('./lib/db'),
    func = new(require('./lib/function'))
 require('dotenv').config()
+const creator = `@neoxrs – Wildan Izzudin`
 const PORT = process.env.PORT || 8080
 const runServer = async () => {
    var redirect
-   const fileStore = await db(process.env.MONGODB_DB_NAME, process.env.MONGODB_COLLECTION)
+   const mongo = await db(process.env.MONGODB_DB_NAME, process.env.MONGODB_COLLECTION)
    setInterval(async function() {
-      const data = await fileStore.find().toArray()
+      const data = await mongo.find().toArray()
       if (data.length == 0) return
-      data.filter(v => (new Date * 1) >= v.uploaded_at).map(async v => {
-         await fileStore.deleteOne({
+      data.filter(v => (new Date * 1) >= v.expired).map(async v => {
+         await mongo.deleteOne({
             _id: v._id
          })
          fs.unlinkSync('./public/uploads/' + v.filename)
@@ -25,15 +27,19 @@ const runServer = async () => {
    app.set('view engine', 'ejs')
       .use(express.static(path.join(__dirname, 'public')))
       .use(logger('dev'))
+      .use(favicon(process.cwd() + '/public/favicon.ico'))
       .get('/', (req, res) => {
-         res.render(process.cwd() + '/public/index')
+         res.render(process.cwd() + '/public/index', {
+            title: 'Temporary File Hosting'
+         })
       })
       .get('/file/:hash', async (req, res) => {
          const hash = req.params.hash
-         const check = await fileStore.findOne({
+         const check = await mongo.findOne({
             _id: hash
          })
          if (!check) return res.status(404).json({
+            creator,
             status: false,
             msg: 'File not found'
          })
@@ -43,13 +49,15 @@ const runServer = async () => {
             data: {
                ...check,
                size,
-               timeout: func.timeout(check.uploaded_at - (new Date * 1))
+               timeout: func.timeout(check.expired - (new Date * 1))
             }
          })
       })
       .get('*', (req, res) => {
          return res.status(404).json({
-            status: false
+            creator,
+            status: false,
+            msg: 'Page not found'
          })
       })
 
@@ -65,10 +73,10 @@ const runServer = async () => {
          const id = func.makeId(6)
          cb(null, id + path.extname(file.originalname))
          redirect = id
-         await fileStore.insertOne({
+         await mongo.insertOne({
             _id: id,
             filename: id + path.extname(file.originalname),
-            uploaded_at: (new Date * 1) + 90000
+            expired: (new Date * 1) + 3_600_000
          })
       }
    })
