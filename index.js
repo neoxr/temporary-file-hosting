@@ -7,8 +7,8 @@ const express = require('express'),
    func = new(require('./lib/function'))
 require('dotenv').config()
 const PORT = process.env.PORT || 8080
-const fileStore = await db(process.env.MONGODB_DB_NAME, process.env.MONGODB_COLLECTION)
 const runServer = async () => {
+   const fileStore = await db(process.env.MONGODB_DB_NAME, process.env.MONGODB_COLLECTION)
    const app = express()
    app.set('view engine', 'ejs')
       .use(express.static(path.join(__dirname, 'public')))
