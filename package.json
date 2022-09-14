@@ -1,8 +1,8 @@
 {
-  "name": "nodejs-simple-file-upload",
+  "name": "temporary-file-hosting",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "All uploaded files are automatically deleted after 60 minutes.",
+  "main": "index.js",
   "dependencies": {
     "dotenv": "^16.0.2",
     "ejs": "^2.5.7",
@@ -15,16 +15,16 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node ."
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Majidkn/nodejs-simple-file-upload.git"
+    "url": "git+https://github.com/neoxr/temporary-file-hosting.git"
   },
-  "author": "",
+  "author": "Wildan Izzudin",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Majidkn/nodejs-simple-file-upload/issues"
+    "url": "https://github.com/neoxr/temporary-file-hosting/issues"
   },
-  "homepage": "https://github.com/Majidkn/nodejs-simple-file-upload#readme"
+  "homepage": "https://github.com/neoxr/temporary-file-hosting#readme"
 }
