@@ -4,6 +4,7 @@ const express = require('express'),
    favicon = require('serve-favicon'),
    logger = require('morgan'),
    path = require('path'),
+   axios = require('axios'),
    db = require('./lib/db'),
    func = new(require('./lib/function'))
 require('dotenv').config()
