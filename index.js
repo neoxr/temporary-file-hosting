@@ -7,8 +7,8 @@ const express = require('express'),
    func = new(require('./lib/function'))
 require('dotenv').config()
 const PORT = process.env.PORT || 8080
+const fileStore = await db(process.env.MONGODB_DB_NAME, process.env.MONGODB_COLLECTION)
 const runServer = async () => {
-   const fileStore = await db(process.env.MONGODB_DB_NAME, process.env.MONGODB_COLLECTION)
    const app = express()
    app.set('view engine', 'ejs')
       .use(express.static(path.join(__dirname, 'public')))
@@ -41,14 +41,14 @@ const runServer = async () => {
          }
          cb(null, dir)
       },
-      filename: async function(req, file, cb) {
+      filename: async function(req, res, file, cb) {
      	cb(null, (new Date * 1) + path.extname(file.originalname))
          const id = func.makeId(6)
-         await fileStore.insert([{
+         await fileStore.insertOne({
             _id: id,
             filename: id + path.extname(file.originalname),
             uploaded_at: new Date * 1
-         }])
+         })
          setTimeout(function() {
             res.redirect('/file/' + id)
          }, 1700)
