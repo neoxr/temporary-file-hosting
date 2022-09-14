@@ -8,7 +8,7 @@ const express = require('express'),
 require('dotenv').config()
 const PORT = process.env.PORT || 8080
 const runServer = async () => {
-	var code
+   var redirect
    const fileStore = await db(process.env.MONGODB_DB_NAME, process.env.MONGODB_COLLECTION)
    setInterval(async function() {
       const data = await fileStore.find().toArray()
@@ -64,12 +64,12 @@ const runServer = async () => {
       filename: async function(req, file, cb) {
          const id = func.makeId(6)
          cb(null, id + path.extname(file.originalname))
+         redirect = id
          await fileStore.insertOne({
             _id: id,
             filename: id + path.extname(file.originalname),
             uploaded_at: (new Date * 1) + 90000
          })
-         code = id
       }
    })
 
@@ -93,7 +93,7 @@ const runServer = async () => {
                console.log(err)
                return res.end(err.message)
             }
-            res.end('Upload completed : ' + code)
+            res.end('Upload completed : ' + redirect)
          })
       })
       .disable('x-powered-by')
