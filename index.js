@@ -25,7 +25,7 @@ const runServer = async () => {
             status: false,
             msg: 'File not found'
          })
-         res.end(check)
+         res.json(check)
       })
       .get('*', (req, res) => {
          return res.status(404).json({
