@@ -17,7 +17,7 @@ const runServer = async () => {
          await fileStore.deleteOne({
             _id: v._id
          })
-         fs.unlinkSync('./uploads/' + v.filename)
+         fs.unlinkSync('./public/uploads/' + v.filename)
          await func.delay(1500)
       })
    }, 10_000)
@@ -37,7 +37,7 @@ const runServer = async () => {
             status: false,
             msg: 'File not found'
          })
-         const size = func.formatSize(fs.statSync('./uploads/' + check.filename).size)
+         const size = func.formatSize(fs.statSync('./public/uploads/' + check.filename).size)
          res.render(process.cwd() + '/public/detail', {
             title: check.filename + ' | Temporary File Hosting',
             data: {
