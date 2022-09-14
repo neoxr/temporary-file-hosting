@@ -41,7 +41,7 @@ const runServer = async () => {
          }
          cb(null, dir)
       },
-      filename: async function(req, res, file, cb) {
+      filename: async function(req, file, cb) {
      	cb(null, (new Date * 1) + path.extname(file.originalname))
          const id = func.makeId(6)
          await fileStore.insertOne({
@@ -49,9 +49,6 @@ const runServer = async () => {
             filename: id + path.extname(file.originalname),
             uploaded_at: new Date * 1
          })
-         setTimeout(function() {
-            res.redirect('/file/' + id)
-         }, 1700)
       }
    })
    const upload = multer({
