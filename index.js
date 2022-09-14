@@ -42,8 +42,8 @@ const runServer = async () => {
          cb(null, dir)
       },
       filename: async function(req, file, cb) {
-     	cb(null, (new Date * 1) + path.extname(file.originalname))
-         const id = func.makeId(6)
+     	const id = func.makeId(6)
+     	cb(null, id + path.extname(file.originalname))
          await fileStore.insertOne({
             _id: id,
             filename: id + path.extname(file.originalname),
