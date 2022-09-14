@@ -8,6 +8,7 @@ const express = require('express'),
 require('dotenv').config()
 const PORT = process.env.PORT || 8080
 const runServer = async () => {
+   var redirect
    const fileStore = await db(process.env.MONGODB_DB_NAME, process.env.MONGODB_COLLECTION)
    const app = express()
    app.set('view engine', 'ejs')
@@ -49,8 +50,10 @@ const runServer = async () => {
             filename: id + path.extname(file.originalname),
             uploaded_at: new Date * 1
          })
+         redirect = id
       }
    })
+   
    const upload = multer({
       storage: storage,
       fileFilter: function(req, file, cb) {
@@ -64,6 +67,7 @@ const runServer = async () => {
          fileSize: Number(process.env.MAX_UPLOAD_SIZE) * 1000 * 1000
       }
    }).array('files', 12)
+   
    app.post('/upload', async function(req, res, next) {
          upload(req, res, function(err) {
             if (err) {
@@ -71,6 +75,7 @@ const runServer = async () => {
                return res.end(err.message)
             }
             res.end('Upload completed')
+            res.redirect('/file/' + redirect)
          })
       })
       .disable('x-powered-by')
