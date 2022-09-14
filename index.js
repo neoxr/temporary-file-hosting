@@ -18,7 +18,7 @@ const runServer = async () => {
       })
       .get('/file/:hash', async (req, res) => {
          const hash = req.params.hash
-         const check = await fileStore.find({
+         const check = await fileStore.findOne({
             _id: hash
          })
          if (!check) return res.status(404).json({
