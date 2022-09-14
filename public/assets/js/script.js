@@ -22,9 +22,14 @@ function progressHandler(event) {
 
 function completeHandler(event) {
    $('file-upload__label').innerHTML = event.target.responseText
-   setTimeout(function() {
-      $('file-upload__label').innerHTML = 'Select or drop files here'
-   }, 1500)
+   if (/complete/i.test(event.target.responseText)) {
+      var id = event.target.responseText.split(':')[1].trim()
+      window.location = '/file/' + id
+   } else {
+      setTimeout(function() {
+         $('file-upload__label').innerHTML = 'Select or drop files here'
+      }, 1500)
+   }
 }
 
 function errorHandler(event) {

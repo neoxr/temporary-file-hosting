@@ -8,8 +8,19 @@ const express = require('express'),
 require('dotenv').config()
 const PORT = process.env.PORT || 8080
 const runServer = async () => {
-   var redirect
+	var code
    const fileStore = await db(process.env.MONGODB_DB_NAME, process.env.MONGODB_COLLECTION)
+   setInterval(async function() {
+      const data = await fileStore.find().toArray()
+      if (data.length == 0) return
+      data.filter(v => (new Date * 1) >= v.uploaded_at).map(async v => {
+         await fileStore.deleteOne({
+            _id: v._id
+         })
+         fs.unlinkSync('./uploads/' + v.filename)
+         await func.delay(1500)
+      })
+   }, 10_000)
    const app = express()
    app.set('view engine', 'ejs')
       .use(express.static(path.join(__dirname, 'public')))
@@ -26,7 +37,15 @@ const runServer = async () => {
             status: false,
             msg: 'File not found'
          })
-         res.json(check)
+         const size = func.formatSize(fs.statSync('./uploads/' + check.filename).size)
+         res.render(process.cwd() + '/public/detail', {
+            title: check.filename + ' | Temporary File Hosting',
+            data: {
+               ...check,
+               size,
+               timeout: func.timeout(check.uploaded_at - (new Date * 1))
+            }
+         })
       })
       .get('*', (req, res) => {
          return res.status(404).json({
@@ -43,17 +62,17 @@ const runServer = async () => {
          cb(null, dir)
       },
       filename: async function(req, file, cb) {
-     	const id = func.makeId(6)
-     	cb(null, id + path.extname(file.originalname))
+         const id = func.makeId(6)
+         cb(null, id + path.extname(file.originalname))
          await fileStore.insertOne({
             _id: id,
             filename: id + path.extname(file.originalname),
-            uploaded_at: new Date * 1
+            uploaded_at: (new Date * 1) + 90000
          })
-         redirect = id
+         code = id
       }
    })
-   
+
    const upload = multer({
       storage: storage,
       fileFilter: function(req, file, cb) {
@@ -67,15 +86,14 @@ const runServer = async () => {
          fileSize: Number(process.env.MAX_UPLOAD_SIZE) * 1000 * 1000
       }
    }).array('files', 12)
-   
+
    app.post('/upload', async function(req, res, next) {
          upload(req, res, function(err) {
             if (err) {
                console.log(err)
                return res.end(err.message)
             }
-            res.end('Upload completed')
-            res.redirect('/file/' + redirect)
+            res.end('Upload completed : ' + code)
          })
       })
       .disable('x-powered-by')

@@ -3,13 +3,13 @@
 <body>
    <!-- partial:index.partial.html -->
    <div class="center-div">
-      <button onclick="download()"> Download (24.13 MB) </button>
+      <button onclick="download()"> Download (<%- data.size %>) </button>
       <br><br>
-      <div class="info"> All saved files will be deleted within 60 minutes, this file will be deleted at 4:37pm </div>
+      <div class="info"> All saved files will be deleted within 60 minutes, this file will be deleted : <%- data.timeout %></div>
       <script>
          function download() {
             new jsFileDownloader({
-                  url: '<%- process.env.WEBSITE %>/uploads/1663131492381.jpg',
+                  url: '<%- process.env.WEBSITE %>/uploads/<%- data.filename %>',
                   forceDesktopMode: true
                })
                .catch(function(error) {
