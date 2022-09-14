@@ -9,7 +9,7 @@
       <script>
          function download() {
             new jsFileDownloader({
-                  url: '<%- process.env.WEBSITE %>/uploads/<%- data.filename %>',
+                  url: '<%- process.env.WEBSITE_URL %>/uploads/<%- data.filename %>',
                   forceDesktopMode: true
                })
                .catch(function(error) {

@@ -108,7 +108,12 @@ const runServer = async () => {
          })
       })
       .disable('x-powered-by')
-      .listen(PORT, () => console.log(`Server is running in port ${PORT}`))
+      .listen(PORT, () => {
+         console.log(`Server is running in port ${PORT}`)
+         setInterval(() => {
+            axios.get(process.env.WEBSITE_URL).catch(console.log)
+         }, 30 * 1000)
+      })
 }
 
 runServer().catch(() => runServer())
